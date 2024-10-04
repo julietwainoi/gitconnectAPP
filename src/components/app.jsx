@@ -38,7 +38,7 @@ export default App;*/
 
 
 
-/*import React from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./header.jsx";
 import Article from "./article.jsx";
@@ -64,27 +64,7 @@ function App() {
     );
 }
 
-export default App; */
-
-
-import Header from './header';
-import Test from './test';
-import Home from './Home';
-import Article from './article';
-import Footer from './footer';
-
-function App() {
-    return (
-        <div>
-            {/* You can remove the Router and Switch components */}
-
-            <Test />
-            <Home />
-            <Article />
-
-        </div>
-    );
-}
-
 export default App;
+
+
 
