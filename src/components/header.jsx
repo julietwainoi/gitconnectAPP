@@ -9,6 +9,7 @@ function Header() {
                     <li><Link to="/" className="text-white hover:underline">Test</Link></li>
                     <li><Link to="/home" className="text-white hover:underline">Home</Link></li>
                     <li><Link to="/article" className="text-white hover:underline">Article</Link></li>
+                    <li><Link to="/about" className="text-white hover:underline">About</Link></li>
                 </ul>
             </nav>
         </header>
