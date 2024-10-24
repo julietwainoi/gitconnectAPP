@@ -22,6 +22,7 @@ export const login = async (email, password) => {
 export const getCategories = async () => {
     try {
         const token = localStorage.getItem('token');  // Retrieve token from localStorage
+        //http://localhost:8000/v1/auth/categories/
         const response = await axios.get(`${API_URL}/auth/categories/`, {
             headers: {
                 Authorization: `Bearer ${token}`  // Send the token in the Authorization header

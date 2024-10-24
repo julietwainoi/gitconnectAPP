@@ -1,7 +1,15 @@
-import React from 'react';
+//import React from 'react';
+import React, { useContext } from 'react';
+import { UserContext } from '../UserContext';
 
-function About(props) {
-    return <h2>Welcome to the About Us Page, {props.name}</h2>;
+function About({ name }) {
+    const { user } = useContext(UserContext);
+
+    return (
+        <div>
+            <h1>About Page</h1>
+            <p>This is about {name}, but you're logged in as {user.name} ({user.role}).</p>
+        </div>
+    );
 }
-
 export default About;
