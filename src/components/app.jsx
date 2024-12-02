@@ -54,7 +54,7 @@ function App() {
     return (
         <UserProvider>
             <Router>
-                <div>
+                <div className="pt-50">
                     <Header />
                     <main>
                         <Routes>
