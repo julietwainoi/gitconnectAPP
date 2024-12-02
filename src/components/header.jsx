@@ -29,9 +29,9 @@ function Header() {
                             className="h-6 w-6"
                         >
                             <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
                                 d="M4 6h16M4 12h16M4 18h16"
                             />
                         </svg>
@@ -40,8 +40,8 @@ function Header() {
 
                 {/* Navigation Links */}
                 <ul
-                    className={`flex md:flex-row flex-col md:space-x-6 space-y-4 md:space-y-0 absolute md:relative bg-blue-600 md:bg-transparent w-full md:w-auto p-6 md:p-0 top-16 left-0 md:top-0 md:left-0 transition-all duration-300 ease-in-out ${isMenuOpen ? 'block' : 'hidden'
-                        }`}
+                    className={`flex md:flex-row flex-col md:space-x-6 space-y-4 md:space-y-0 absolute md:relative bg-blue-600 md:bg-transparent w-full md:w-auto p-6 md:p-0 top-16 left-0 md:top-0 md:left-0 transition-all duration-300 ease-in-out 
+                    ${isMenuOpen ? 'block' : 'hidden md:flex'}`} // <-- Key change here
                 >
                     <li>
                         <Link
