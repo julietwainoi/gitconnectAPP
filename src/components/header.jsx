@@ -48,7 +48,7 @@ function Header() {
                             to="/"
                             className="text-white hover:text-yellow-300 transition duration-300 ease-in-out text-lg"
                         >
-                            Test
+                            welcome
                         </Link>
                     </li>
                     <li>
