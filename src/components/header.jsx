@@ -8,7 +8,8 @@ function Header() {
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
     return (
-        <header className="bg-gradient-to-r from-blue-800 to-blue-600 p-6 shadow-lg">
+
+        <header className="bg-black p-6 shadow-lg">
             <nav className="flex justify-between items-center max-w-7xl mx-auto">
                 {/* Logo */}
                 <div className="text-white text-2xl font-bold">

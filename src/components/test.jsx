@@ -1,23 +1,35 @@
-import React, { useContext } from "react";
-import { UserContext } from '../UserContext';
+import React from "react";
 
-function Test({ name }) {
-    const { user } = useContext(UserContext);
-
+function Test() {
     return (
-        <div className="flex flex-col items-center justify-center min-h-[80vh] bg-gradient-to-r from-blue-50 to-blue-100 text-gray-800 p-8 rounded-lg shadow-lg">
-            <h1 className="text-5xl font-extrabold text-blue-700 mb-6 animate-pulse">
-                Welcome!
+        <div className="flex flex-col items-center justify-center min-h-[80vh] bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-8 rounded-lg shadow-lg">
+            {/* Welcome Message */}
+            <h1 className="text-6xl font-extrabold text-white mb-6 animate-fade-in">
+                Welcome to Our Platform!
             </h1>
-            <p className="text-2xl max-w-2xl text-center leading-relaxed mb-4">
-                Hello, <span className="font-bold text-blue-700">{user.name}</span>!
+
+            {/* Subtext */}
+            <p className="text-2xl max-w-3xl text-center leading-relaxed mb-6">
+                Discover new features, explore possibilities, and make the most of your experience.
+                We're glad to have you here!
             </p>
-            <p className="text-xl max-w-2xl text-center leading-relaxed bg-white p-4 rounded-lg shadow-md">
-                You are logged in as <span className="font-semibold text-green-600">{user.name}</span>,
-                holding the role of <span className="font-semibold text-red-600">{user.role}</span>.
-            </p>
-            <button className="mt-8 px-6 py-3 bg-blue-600 text-white font-semibold rounded-full shadow hover:bg-blue-700 transform hover:scale-105 transition-all">
-                Explore Dashboard
+
+            {/* Decorative Elements */}
+            <div className="flex space-x-6 my-6">
+                <div className="bg-white p-4 rounded-full shadow-md">
+                    <i className="fas fa-chart-line text-blue-600 text-4xl"></i>
+                </div>
+                <div className="bg-white p-4 rounded-full shadow-md">
+                    <i className="fas fa-cogs text-indigo-600 text-4xl"></i>
+                </div>
+                <div className="bg-white p-4 rounded-full shadow-md">
+                    <i className="fas fa-users text-green-600 text-4xl"></i>
+                </div>
+            </div>
+
+            {/* Call to Action Button */}
+            <button className="mt-8 px-8 py-4 bg-white text-blue-600 font-semibold rounded-full shadow-lg hover:bg-gray-100 hover:scale-105 transition-all">
+                Get Started
             </button>
         </div>
     );
