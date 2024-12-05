@@ -86,7 +86,7 @@ function Header() {
                     </li>
                     <li>
                         <Link
-                            to="/LoginForm"
+                            to="/AuthForm"
                             className="text-white hover:text-yellow-300 transition duration-300 ease-in-out text-lg"
                         >
                             Login
