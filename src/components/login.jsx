@@ -1,21 +1,17 @@
 import React, { useState } from 'react';
-import { login, register } from '../api';  // Import the login and register functions from api.js
+import { login, register } from '../api'; // Import the login and register functions from api.js
 
 function AuthForm() {
-    const [isLogin, setIsLogin] = useState(true);  // Toggle between login and register
+    const [isLogin, setIsLogin] = useState(true); // Toggle between login and register
+    const [name, setName] = useState(''); // For registration
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+    const [userType, setUserType] = useState(''); // For registration
     const [error, setError] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
-
-        if (!isLogin && password !== confirmPassword) {
-            setError('Passwords do not match.');
-            return;
-        }
 
         try {
             if (isLogin) {
@@ -23,7 +19,7 @@ function AuthForm() {
                 console.log('Login successful:', response);
                 // Handle login success
             } else {
-                const response = await register(email, password);
+                const response = await register(name, email, userType, password);
                 console.log('Registration successful:', response);
                 // Handle registration success
             }
@@ -41,6 +37,21 @@ function AuthForm() {
                 </h2>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Name Input (only for registration) */}
+                    {!isLogin && (
+                        <div>
+                            <label className="block text-gray-700 font-medium mb-2">Name</label>
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                required
+                                placeholder="Enter your name"
+                                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
+                    )}
+
                     {/* Email Input */}
                     <div>
                         <label className="block text-gray-700 font-medium mb-2">Email</label>
@@ -67,18 +78,20 @@ function AuthForm() {
                         />
                     </div>
 
-                    {/* Confirm Password Input (only for registration) */}
+                    {/* User Type Input (only for registration) */}
                     {!isLogin && (
                         <div>
-                            <label className="block text-gray-700 font-medium mb-2">Confirm Password</label>
-                            <input
-                                type="password"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
+                            <label className="block text-gray-700 font-medium mb-2">User Type</label>
+                            <select
+                                value={userType}
+                                onChange={(e) => setUserType(e.target.value)}
                                 required
-                                placeholder="Confirm your password"
                                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
+                            >
+                                <option value="">Select user type</option>
+                                <option value="admin">Admin</option>
+                                <option value="user">User</option>
+                            </select>
                         </div>
                     )}
 
@@ -99,7 +112,7 @@ function AuthForm() {
                     {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
                     <button
                         onClick={() => setIsLogin(!isLogin)}
-                        className="text-blue-600 hover:underline font-medium"
+                        className="text-black-600 hover:underline font-medium"
                     >
                         {isLogin ? 'Register' : 'Login'}
                     </button>
