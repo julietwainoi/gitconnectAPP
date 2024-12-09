@@ -108,7 +108,7 @@ function AuthForm() {
                 </form>
 
                 {/* Toggle between Login and Register */}
-                <p className="text-center text-sm text-gray-600 mt-4">
+                <p className="text-center text-sm text-black-600 mt-4">
                     {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
                     <button
                         onClick={() => setIsLogin(!isLogin)}

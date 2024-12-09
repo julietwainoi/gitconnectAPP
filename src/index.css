@@ -34,6 +34,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: #f9fafb; /* Light gray background for better visibility */
   color: #333; /* Darker text color for readability */
+  background-color: #ffffff;
   @apply text-base md:text-lg; /* Ensure responsive font sizes */
 }
 
