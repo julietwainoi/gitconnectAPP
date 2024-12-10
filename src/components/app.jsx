@@ -21,9 +21,7 @@ function App() {
                             <Route path="/" element={<Test />} />
                             <Route path="/home" element={<Home />} />
                             <Route path="/article" element={<Article />} />
-                            <Route
-                                path="/about"
-                                element={<About name="John Doe" />} // Passing props here
+                            <Route path="/about" element={<About />} // Passing props here
                             />
                             <Route path="/Categories" element={<Categories />} />
                             <Route path="/AuthForm" element={<AuthForm />} />
