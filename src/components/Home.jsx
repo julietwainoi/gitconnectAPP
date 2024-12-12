@@ -8,7 +8,7 @@ function Home() {
         // Simulate API call
         setTimeout(() => {
             setContent({
-                title: "Welcome to Our Amazing Home Page",
+                title: "Welcome to Our Amazing Home page",
                 description:
                     "Discover incredible content, explore new insights, and dive into a world of endless possibilities. We are here to provide you with the best experience and keep you engaged with our dynamic offerings.",
                 buttonText: "Get Started",
