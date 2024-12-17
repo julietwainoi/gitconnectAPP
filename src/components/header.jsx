@@ -13,7 +13,7 @@ function Header() {
             <nav className="flex justify-between items-center max-w-7xl mx-auto">
                 {/* Logo */}
                 <div className="text-white text-2xl font-bold">
-                    <Link to="/">MyBrand</Link>
+                    <Link to="/home">MyBrand</Link>
                 </div>
 
                 {/* Hamburger Icon for Mobile */}
