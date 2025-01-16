@@ -5,7 +5,7 @@ function Test() {
         <div className="flex flex-col items-center justify-center min-h-[80vh] bg-white text-gray-800 p-8 rounded-lg shadow-lg">
             {/* Welcome Message */}
             <h1 className="text-6xl font-extrabold text-blue-600 mb-6 animate-fade-in">
-                Welcome to Ou!
+                Welcome to Our site!
             </h1>
 
             {/* Subtext */}
