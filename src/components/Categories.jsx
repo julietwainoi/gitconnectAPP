@@ -20,7 +20,7 @@ const Categories = () => {
                 {loading ? (
                     <p className="text-blue-500 text-center animate-pulse">Loading categories...</p>
                 ) : Categories.length === 0 ? (
-                    <p className="text-gray-500 text-center">No categories available to display.</p>
+                    <p className="text-gray-500 text-center"> categories available to display.</p>
                 ) : (
                     <ul className="divide-y divide-gray-200">
                         {Categories.map(category => (
