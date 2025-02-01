@@ -1,26 +1,43 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useContext, useState } from "react";
 
-
+// Create context
 export const UserContext = createContext();
 
-// Create a provider component
+// Create provider component
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState({
-        name: 'John Doee',
-        role: 'admin', // Initial role
+        name: "John Doe",
+        role: "viewer", // Default role
     });
 
-    // Function to change the user's role
+    // Define permissions
+    const permissions = {
+        admin: ["read", "write", "delete"],
+        editor: ["read", "write"],
+        viewer: ["read"],
+    };
+
+    // Check if user has permission
+    const hasPermission = (action) => {
+        return permissions[user.role]?.includes(action);
+    };
+
+    // Function to change role
     const setRole = (newRole) => {
         setUser((prevUser) => ({
             ...prevUser,
-            role: newRole, // Update the role in the user state
+            role: newRole,
         }));
     };
 
     return (
-        <UserContext.Provider value={{ user, setUser, setRole }}>
+        <UserContext.Provider value={{ user, setUser, setRole, hasPermission }}>
             {children}
         </UserContext.Provider>
     );
+};
+
+// Custom hook to use the context
+export const useUser = () => {
+    return useContext(UserContext);
 };
