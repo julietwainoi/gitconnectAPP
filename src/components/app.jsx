@@ -29,7 +29,7 @@ function App() {
                             <Route path="/profile" element={<UserProfile />} /> {/* Add this */}
                         </Routes>
                     </main>
-                    <Footer />
+                    <Footer className="mt-auto" />
                 </div>
             </Router>
         </UserProvider>

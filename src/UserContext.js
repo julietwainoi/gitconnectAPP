@@ -7,31 +7,13 @@ export const UserContext = createContext();
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState({
         name: "John Doe",
+        email: "johndoe@example.com",
+        avatar: "https://via.placeholder.com/150",
         role: "viewer", // Default role
     });
 
-    // Define permissions
-    const permissions = {
-        admin: ["read", "write", "delete"],
-        editor: ["read", "write"],
-        viewer: ["read"],
-    };
-
-    // Check if user has permission
-    const hasPermission = (action) => {
-        return permissions[user.role]?.includes(action);
-    };
-
-    // Function to change role
-    const setRole = (newRole) => {
-        setUser((prevUser) => ({
-            ...prevUser,
-            role: newRole,
-        }));
-    };
-
     return (
-        <UserContext.Provider value={{ user, setUser, setRole, hasPermission }}>
+        <UserContext.Provider value={{ user, setUser }}>
             {children}
         </UserContext.Provider>
     );

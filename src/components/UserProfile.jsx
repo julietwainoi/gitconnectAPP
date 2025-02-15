@@ -2,21 +2,17 @@ import React from "react";
 import { useUser } from "../UserContext";
 
 const UserProfile = () => {
-    const { user, setRole, hasPermission } = useUser();
+    const { user } = useUser();
 
     return (
-        <div>
-            <h2>Welcome, {user.name}!</h2>
-            <p>Current Role: {user.role}</p>
-
-            {/* Conditionally render buttons based on permissions */}
-            {hasPermission("write") && <button>Edit Content</button>}
-            {hasPermission("delete") && <button>Delete Content</button>}
-
-            <h3>Change Role:</h3>
-            <button onClick={() => setRole("viewer")}>Set to Viewer</button>
-            <button onClick={() => setRole("editor")}>Set to Editor</button>
-            <button onClick={() => setRole("admin")}>Set to Admin</button>
+        <div className="p-6 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-4 text-gray-900">
+            <h2 className="text-xl font-bold text-center">User Profile</h2>
+            <div className="flex flex-col items-center space-y-3">
+                <img src={user.avatar || "default-avatar.png"} alt="User Avatar" className="w-24 h-24 rounded-full border border-gray-300" />
+                <p className="text-lg font-semibold">{user.name}</p>
+                <p className="text-sm text-gray-600">Email: {user.email}</p>
+                <p className="text-sm text-gray-600">Role: {user.role}</p>
+            </div>
         </div>
     );
 };
