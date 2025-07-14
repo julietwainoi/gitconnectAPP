@@ -34,7 +34,7 @@ jobs:
       # Step 4: Build the Docker image
       - name: Build the Docker image
         run: |
-          docker build -t public.ecr.aws/k1o2c9m2/apprepo
+          docker build -t public.ecr.aws/k1o2c9m2/apprepo:latest
 
       # Step 5: Push the Docker image to Public ECR
       - name: Push the Docker image to Public ECR
