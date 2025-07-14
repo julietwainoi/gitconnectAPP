@@ -9,6 +9,11 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
+    
+    permissions:
+      id-token: write       # Required for OIDC
+      contents: read  
+
     steps:
       # Step 1: Check out the code from the repository
       - name: Checkout code
@@ -19,7 +24,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume:     	arn:aws:iam::${{secrets.AWS_ACCOUNT_ID}}:role/GitHubOIDCDeploymentRole
-            aws-region: us-east-1  
+          aws-region: us-east-1  
     
       - name: Login to AWS Public ECR
         uses: aws-actions/amazon-ecr-login@v2
