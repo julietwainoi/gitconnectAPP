@@ -131,6 +131,8 @@ output "load_balancer_dns" {
   description = "Public ALB URL"
   value       = aws_lb.main.dns_name
 }
+
+
 resource "aws_appautoscaling_target" "ecs_scale_target" {
   max_capacity       = 5
   min_capacity       = 1
