@@ -1,70 +1,195 @@
-# Getting Started with Create React App
+🚀 React App on AWS ECS with ECR & ALB
+This project demonstrates how to containerize a React application and deploy it securely to AWS ECS (Fargate) using:
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Amazon ECR for image storage
 
-## Available Scripts
+Application Load Balancer (ALB) for routing
 
-In the project directory, you can run:
+VPC networking best practices for secure isolation
 
-### `npm start`
+ECS Service Auto Scaling based on CPU utilization
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+🧱 Architecture Overview
+React app containerized using Docker
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Docker image stored in Amazon ECR
 
-### `npm test`
+Deployed to ECS (Fargate) as a service
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+ALB routes incoming traffic to ECS tasks
 
-### `npm run build`
+ECS tasks hosted in private subnets
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+ALB & NAT Gateway in public subnets
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Auto Scaling enabled for ECS based on CPU
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+🔐 VPC Networking Layout
+scss
+Copy
+Edit
+VPC
+├── Public Subnet(s)
+│   ├── Application Load Balancer (ALB)
+│   └── NAT Gateway
+│
+└── Private Subnet(s)
+    └── ECS Service (Fargate Tasks running React container)
+ALB receives public HTTPS traffic and routes it to ECS
 
-### `npm run eject`
+ECS tasks are isolated from the internet
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+NAT Gateway allows outbound access if needed (e.g., for updates)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+⚖️ Auto Scaling Based on CPU
+To ensure the app scales under load, ECS Service Auto Scaling was configured:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Scaling metric: CPU utilization
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Target threshold: 70%
 
-## Learn More
+If average CPU usage across running tasks exceeds 70%, new tasks are added
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+If CPU usage drops, excess tasks are removed
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+This provides horizontal scalability, helping maintain performance and availability under varying traffic loads.
 
-### Code Splitting
+🐳 Containerization with Docker
+Dockerfile
+Copy
+Edit
+# Dockerfile
+FROM node:18 AS builder
+WORKDIR /app
+COPY . .
+RUN npm install && npm run build
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+FROM nginx:alpine
+COPY --from=builder /app/build /usr/share/nginx/html
+EXPOSE 80
+📦 CI/CD: Pushing Image to Amazon ECR via GitHub Actions
+This project uses GitHub Actions to build and push the Docker image to Amazon ECR automatically on code changes.
 
-### Analyzing the Bundle Size
+✅ What Happens
+On every push to main, the workflow:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Checks out the latest code
 
-### Making a Progressive Web App
+Builds the Docker image
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Authenticates to ECR using OIDC (secure)
 
-### Advanced Configuration
+Pushes the image to your ECR repo
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+📌 Prerequisites
+ECR repo (e.g., react-app)
 
-### Deployment
+IAM role with OIDC trust for GitHub
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+GitHub repo permissions properly configured
 
-### `npm run build` fails to minify
+🧩 Sample GitHub Actions Workflow
+yaml
+Copy
+Edit
+name: Deploy React App to ECR
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::<aws_account_id>:role/<github_oidc_role>
+          aws-region: <region>
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: react-app
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+🚀 Deploying to ECS (Fargate)
+Create ECS Cluster
+
+Register Task Definition
+
+Set CPU & memory
+
+Point to your ECR image
+
+Create ECS Service
+
+Launch type: Fargate
+
+Network: Private subnets
+
+Attach to ALB Target Group
+
+Enable Auto Scaling
+
+Target CPU Utilization: 70%
+
+Set min/max task count (e.g., 1–5)
+
+🌐 Routing with Application Load Balancer (ALB)
+ALB is deployed in public subnet
+
+HTTPS listener forwards requests to ECS
+
+Security Groups:
+
+ALB allows inbound 443 (HTTPS)
+
+ECS only accepts traffic from ALB
+
+🔐 Security Best Practices
+ECS tasks are not publicly accessible
+
+ALB is the only internet-facing component
+
+NAT Gateway used only if tasks require outbound access
+
+IAM roles follow least privilege principle
+
+🧪 Testing the Setup
+Access the app using the ALB DNS name or your custom domain
+
+Ensure it loads over HTTPS
+
+Monitor logs in CloudWatch
+
+Simulate load to observe auto scaling behavior
+
+✅ To-Do / Customization Ideas
+⛓️ Add SSL with ACM
+
+📦 Automate infra with Terraform/CDK
+
+🧪 Add staging environments
+
+🛰️ Add CloudFront as CDN
+
+🔁 Extend CI/CD to trigger ECS deployment post-push
+
+📬 Contact
+Feel free to reach out for questions, feedback, or collaboration!
