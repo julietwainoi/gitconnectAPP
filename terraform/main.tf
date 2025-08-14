@@ -86,55 +86,9 @@ module "alb" {
 
 
 
-#resource "aws_lb" "main" {
-# name               = "lb-alb"
-# internal           = false
-#load_balancer_type = "application"
-# security_groups    = [module.lb_sg.id]
-
-# subnets = module.network.public_subnets.ids
-
-# tags = {
-# Name = "lb-public-alb"
-# }
-#}
 
 
 
-
-
-#resource "aws_lb_target_group" "ecs_tg" {
-# name        = "ecs-tg"
-#  port        = 80
-#  protocol    = "HTTP"
-# vpc_id      = module.network.vpc_network.id
-# target_type = "ip"
-
-#health_check {
-#  path                = "/"
-# port                = "80"
-# protocol            = "HTTP"
-# matcher             = "200"
-# interval            = 30
-# timeout             = 5
-# healthy_threshold   = 2
-# unhealthy_threshold = 2
-#}
-#}
-
-
-
-
-#resource "aws_lb_listener" "http" {
-#load_balancer_arn = aws_lb.main.arn
-#port              = 80
-#protocol          = "HTTP"
-
-#default_action {
-#  type             = "forward"
-#  target_group_arn = aws_lb_target_group.ecs_tg.arn
-# }
-#}
 
 module "task_definition" {
   source             = "./modules/ecs_task_definition"
@@ -143,27 +97,11 @@ module "task_definition" {
   container_name     = "web"
   container_image    = "public.ecr.aws/k1o2c9m2/apprepo:latest"
   container_port     = 80
+  cpu                = "256"
+  memory             = "512"
 }
 
-#resource "aws_ecs_task_definition" "web" {
-# family                   = "my-task"
-# network_mode             = "awsvpc"
-# requires_compatibilities = ["FARGATE"]
-#cpu                      = "256"
-# memory                   = "512"
-# execution_role_arn       = data.aws_iam_role.ecs_task_execution_role.arn
 
-#container_definitions = jsonencode([{
-#name      = "web"
-# image     = "public.ecr.aws/k1o2c9m2/apprepo:latest"
-#essential = true
-# portMappings = [{
-# containerPort = 80
-#hostPort      = 80
-# protocol      = "tcp"
-# }]
-#}])
-#}
 module "ecs_service" {
   source              = "./modules/ecs_service"
   name                = "web-service"
@@ -175,79 +113,43 @@ module "ecs_service" {
   security_group_ids = [module.ecs_sg.security_group_id]
 
   target_group_arn    = module.alb.target_group_arn
-  #target_group_arn    = aws_lb_target_group.ecs_tg.arn
   container_name = "web"
   container_port = 80
   depends_on = [module.alb]
-  #depends_on  = [module.alb.http_listener_arn]
-  #depends_on          = [aws_lb_listener.http]
+
 }
 
-#resource "aws_ecs_service" "web" {
-#name            = "web-service"
-#cluster         = aws_ecs_cluster.main.id
-# task_definition = aws_ecs_task_definition.web.arn
-#desired_count   = 1
-#launch_type     = "FARGATE"
-
-#network_configuration {
-#subnets          = module.network.private_subnets.ids
-# assign_public_ip = true
-#  security_groups  = [module .ecs_sg.id]
-#}
-
-#load_balancer {
-#  target_group_arn = aws_lb_target_group.ecs_tg.arn
-# container_name   = "web"
-# container_port   = 80
-#}
-
-#depends_on = [aws_lb_listener.http]
-#}
-
-#output "load_balancer_dns" {
-#description = "Public ALB URL"
-#value       = aws_lb.main.dns_name
-#}
 
 
-#module "ecs_cluster" 
-#module "ecs_service" 
+
 
 module "ecs_autoscaling" {
-  source      = "./modules/ecs_autoscaling"
-  resource_id = "service/${module.ecs_cluster.name}/${module.ecs_service.service_name}"
-  #resource_id         = "service/${aws_ecs_cluster.main.name}/${aws_ecs_service.web.name}"
+ source      = "./modules/ecs_autoscaling"
+ resource_id = "service/${module.ecs_cluster.name}/${module.ecs_service.service_name}"
   min_capacity       = 1
   max_capacity       = 5
   policy_name        = "cpu-scale-policy"
   target_value       = 70
   scale_in_cooldown  = 60
-  scale_out_cooldown = 60
+ scale_out_cooldown = 60
 }
 
+locals {
+ alb_resource_label = "${replace(module.alb.lb_arn_suffix, "loadbalancer/", "")}/${replace(module.alb.tg_arn_suffix, "targetgroup/", "")}"
+}
 
-#resource "aws_appautoscaling_target" "ecs_scale_target" {
-#max_capacity       = 5
-# min_capacity       = 1
-#resource_id        = "service/${aws_ecs_cluster.main.name}/${aws_ecs_service.web.name}"
-#scalable_dimension = "ecs:service:DesiredCount"
-# service_namespace  = "ecs"
-#}
+module "ecs_alb_request_scaling" {
+  source = "./modules/ecs_alb_scaling" # path to your module
 
-#resource "aws_appautoscaling_policy" "cpu_policy" {
-# name               = "cpu-scale-policy"
-#policy_type        = "TargetTrackingScaling"
-# resource_id        = aws_appautoscaling_target.ecs_scale_target.resource_id
-#scalable_dimension = aws_appautoscaling_target.ecs_scale_target.scalable_dimension
-# service_namespace  = aws_appautoscaling_target.ecs_scale_target.service_namespace
+  cluster_name        = "ecs-cluster"
+  service_name        = "ecs-service"
+  policy_name         = "scale-on-requests"
+  min_capacity        = 2
+  max_capacity        = 10
+  target_value        = 150
+  scale_in_cooldown   = 30
+  scale_out_cooldown  = 30
 
-#target_tracking_scaling_policy_configuration {
-#target_value       = 70.0
-#predefined_metric_specification {
-#  predefined_metric_type = "ECSServiceAverageCPUUtilization"
-# }
-#scale_in_cooldown  = 60
-#scale_out_cooldown = 60
-#}
-#}
+ alb_resource_label  = local.alb_resource_label
+ #alb_resource_label  = "${replace(module.alb.lb_arn_suffix, "loadbalancer/", "")}/${replace(module.alb.tg_arn_suffix, "targetgroup/", "")}"
+}

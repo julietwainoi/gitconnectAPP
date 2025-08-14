@@ -16,3 +16,11 @@ output "http_listener_arn" {
   description = "HTTP Listener ARN for the ALB"
   value       = aws_lb_listener.http.arn
 }
+
+output "lb_arn_suffix" {
+  value = aws_lb.this.arn_suffix
+}
+
+output "tg_arn_suffix" {
+  value = aws_lb_target_group.this.arn_suffix
+}
